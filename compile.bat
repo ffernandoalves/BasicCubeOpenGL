@@ -1,6 +1,6 @@
 @REM criação da pasta build e suas subpastas
 
-md -p .\build\deps .\build\bin .\build\logs
+md .\build\deps .\build\bin .\build\logs
 
 @REM compilação da libs externas
 
