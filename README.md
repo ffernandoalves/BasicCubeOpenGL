@@ -11,3 +11,5 @@ No linux, use:
 *Não pude testar no linux.*
 
 Após a compilação, o executavel vai ser encontrado na pasta `build/bin/.`
+
+![Deploy](imgs/cube.png)
