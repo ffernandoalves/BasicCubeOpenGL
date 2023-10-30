@@ -7,7 +7,12 @@ int WINDOW_HEIGHT = 600;
 const char* WINDOW_TITLE = "TESTSs";
 const char* SHADER_SOURCE = "shaders\\Basic.shader";
 GLuint shader_program, vao, vbo, ibo;
-// GLuint vcolor;
+
+glm::vec3 cube_pos = glm::vec3(0.0f, 0.0f, -5.0f);
+float cube_angle = 0.0f;
+glm::vec3 cam_pos(0.0f, 0.0f, 0.0f);
+glm::vec3 target_pos(0.0f, 0.0f, -1.0f);
+glm::vec3 up(0.0f, -1.0f, 0.0f);
 
 bool initGLFW() {
     if (!glfwInit()) {
@@ -81,9 +86,9 @@ void start() {
         -1.0f, 1.0f, -1.0f
     };
 
-    for(int i = 0; i < 6*4*3; i++) {
-        vertices[i] *= .5;
-    }
+    // for(int i = 0; i < 6*4*3; i++) {
+    //     vertices[i] *= .5;
+    // }
     
     static const GLuint indices[] = {
         // Face frontal
@@ -130,12 +135,24 @@ void render() {
     GLCall(glUseProgram(shader_program));
 
     GLCall(GLuint vcolor = glGetUniformLocation(shader_program, "vcolor"));
-    GLCall(glUniform3f(vcolor, 0.3f, 0.2f, 0.7f));
+    GLCall(glUniform3f(vcolor, 1.0f, 0.0f, 0.0f));
 
-    // Definição da matriz de projeção
-    glm::mat4 projection = glm::perspective(glm::radians(45.0f), (float)WINDOW_WIDTH/(float)WINDOW_HEIGHT, 0.1f, 100.0f);
-    GLCall(GLuint projLoc = glGetUniformLocation(shader_program, "projection"));
-    GLCall(glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(projection)));
+    glm::mat4 model = glm::mat4(1.0f);
+    glm::mat4 view = glm::mat4(1.0f);
+    glm::mat4 projection = glm::mat4(1.0f);
+
+    model = glm::translate(model, cube_pos) * glm::rotate(model, glm::radians(cube_angle), glm::vec3(0.0f, 1.0f, 0.0f));
+    view = glm::lookAt(cam_pos, target_pos, up);
+    projection = glm::perspective(glm::radians(45.0f), (float)WINDOW_WIDTH/(float)WINDOW_HEIGHT, 0.1f, 100.0f);
+    
+    GLCall(GLuint model_loc = glGetUniformLocation(shader_program, "model"));
+    GLCall(glUniformMatrix4fv(model_loc, 1, GL_FALSE, glm::value_ptr(model)));
+
+    GLCall(GLuint view_loc = glGetUniformLocation(shader_program, "view"));
+    GLCall(glUniformMatrix4fv(view_loc, 1, GL_FALSE, glm::value_ptr(view)));
+
+    GLCall(GLuint proj_loc = glGetUniformLocation(shader_program, "projection"));
+    GLCall(glUniformMatrix4fv(proj_loc, 1, GL_FALSE, glm::value_ptr(projection)));
 
     // Renderizar apenas as arestas (wireframe)
     GLCall(glPolygonMode(GL_FRONT_AND_BACK, GL_LINE));
@@ -157,8 +174,19 @@ void loop() {
     GLCall(glEnable(GL_BLEND));
     GLCall(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA))
 
+    double last_time = glfwGetTime();
+
     while (!glfwWindowShouldClose(window)) {
+        double current_time = glfwGetTime();
+        double delta_time = current_time - last_time;
+        cube_angle += (float)(delta_time * 50.0f);
+        if (cube_angle >= 360.0)
+        {
+            cube_angle = 0.0f;
+        }
         render();
+        last_time = current_time;
+
         glfwPollEvents();
     }
 
