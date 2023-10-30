@@ -5,14 +5,14 @@ GLFWwindow* window = nullptr;
 int WINDOW_WIDTH = 800;
 int WINDOW_HEIGHT = 600;
 const char* WINDOW_TITLE = "TESTSs";
-const char* SHADER_SOURCE = "shaders\\Basic.shader";
+const char* SHADER_SOURCE = "shaders" PATH_SEP "Basic.shader";
 GLuint shader_program, vao, vbo, ibo;
 
 glm::vec3 cube_pos = glm::vec3(0.0f, 0.0f, -5.0f);
 float cube_angle = 0.0f;
 glm::vec3 cam_pos(0.0f, 0.0f, 0.0f);
 glm::vec3 target_pos(0.0f, 0.0f, -1.0f);
-glm::vec3 up(0.0f, -1.0f, 0.0f);
+glm::vec3 up(0.0f, 1.0f, 0.0f);
 
 bool initGLFW() {
     if (!glfwInit()) {

@@ -8,8 +8,10 @@
 #if defined (_WIN32)
     #include <windows.h>
     #define DEBUG_BREAK __debugbreak();
+    #define PATH_SEP "\\"
 #elif defined (__linux__)
     #define DEBUG_BREAK raise(SIGTRAP);
+    #define PATH_SEP "/"
 #endif
 
 #define ASSERT(x) if (!(x)) DEBUG_BREAK;
